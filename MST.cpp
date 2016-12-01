@@ -168,7 +168,7 @@ public:
 	void init(int n){
 		if (this-> n != 0) destroy();
 		this-> n = n;
-		adj = new List <T> [n+1];
+		adj = new List <T> [n];
 	}
 
 	List <T> getAdj(int pos){
@@ -182,12 +182,6 @@ public:
 	void insertEdge(T u, T v, double d){
 		adj[u].insert(v, d);
 		adj[v].insert(u, d);
-		m++;
-	}
-
-	void insertEdge(T u, T v){
-		adj[u].insert(v);
-		adj[v].insert(u);
 		m++;
 	}
 
