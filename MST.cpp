@@ -15,6 +15,90 @@
 
 using namespace std;
 
+class Ordenacao{
+	
+	private:
+		
+		template < class T >
+		static void troca( T& a, T& b ) {
+			
+			T aux = a;
+			a = b;
+			b = aux;
+		}
+		
+		
+		template < class T >
+		static int QuickSort_Particao ( vector<T>& A, int p, int r );
+		
+		
+		template < class T >
+		static void QuickSort_Recursao(vector<T>& A, int p,int r);
+		
+		
+	public:
+		
+		const static int Crescente		= 1 ;
+		const static int Decrescente 	= 2;
+		
+		template < class T>
+		static void QuickSort( vector<T> array);
+};
+template < class T >
+int Ordenacao::QuickSort_Particao( vector<T>& A, int p, int r ){
+
+    T x = A[p];
+    T tmp = A[r + 1];
+    A[r + 1] = x;
+    int i = p;
+    int j = r + 1;
+
+    while (true){
+
+        do {
+
+        	i++;
+        } while( A[i] < x );
+        do {
+
+        	j--;
+        } while( A[j] > x );
+        if(i < j){
+
+        	troca( A[i], A[j] );
+        }else{
+			
+			troca( A[p], A[j] );
+            A[r + 1] = tmp;
+            return j;
+        }
+    }
+}
+
+
+template < class T >
+void Ordenacao::QuickSort_Recursao(vector<T>& A, int p,int r){
+
+    if (p <= r){
+    	
+	    int q = QuickSort_Particao(A, p, r);
+		QuickSort_Recursao(A, p, q-1);
+		QuickSort_Recursao(A, q + 1, r);
+    }
+}
+
+
+template < class T>
+void Ordenacao::QuickSort( vector<T> array){
+	
+	if( not array.empty() ){
+		int tam = (int) array.size();
+		array.push_back( array[0] );
+		QuickSort_Recursao( array, 0, tam -1  );
+		array.pop_back();
+	}
+}
+
 int pai(int i){
 	return (int)floor(i/2);
 }
@@ -77,7 +161,7 @@ public:
     	distance.push_back(d);
     	int tam = (int) items.size();
     	items.push_back( items[0] );
-    	quicksort(items, 0, tam - 1);
+    	Ordenacao::QuickSort(items, 0, tam - 1);
     	items.pop_back();
     }
     void remove(T& x){
