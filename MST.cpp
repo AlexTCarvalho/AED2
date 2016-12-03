@@ -9,7 +9,59 @@
 
 #include <iostream>
 #include <vector>
+#include <cmath>
+#include <cstdlib>
+#include <ctime>
+
 using namespace std;
+
+int pai(int i){
+	return (int)floor(i/2);
+}
+
+int esq(int i){
+	return 2*i;
+}
+
+int dir(int i){
+	return 2*i+1;
+}
+
+template <typename T>
+void maxHeapify(vector <T> &A, int i, int &heapSize){
+	int l = esq(i), r = dir(i), maior = -1;
+	if (l <= heapSize and A[l] > A[i])
+		maior = l;
+	else
+		maior = i;
+
+	if (r <= heapSize and A[r] > A[maior])
+		maior = r;
+	if (maior != i){
+		swap(A[i], A[maior]);
+		maxHeapify(A, maior, heapSize);
+	}
+}
+
+template <typename T>
+void buildMaxHeap(vector <T> &A, int &heapSize){
+	heapSize = (int) A.size() -1;
+	for (int i=(int) floor(heapSize/2); i >=1; i--){
+		maxHeapify(A, i, heapSize);
+	}
+}
+
+template <typename T>
+void heapsort(vector <T> &A){
+	int heapSize = 0;
+	buildMaxHeap(A, heapSize);
+	for (int i=A.size()-1;i > 1;i--){
+		swap(A[1], A[i]);
+		heapSize--;
+		maxHeapify(A, 1, heapSize);
+	}
+}
+
 
 template <typename T>
 class List {
@@ -69,43 +121,6 @@ public:
     T code;
     Node <T>* next;
     Node(){ this->next = NULL;}
-};
-
-template <typename T>
-class Queue
-{
-private:
-    Node <T> *front, *back;
-public:
-
-    Queue (){
-        this->front=new Node <T>();
-        back= front;
-        back->next = NULL;
-    }
-
-    bool empty(){ return front == back;}
-    void queue(T x){
-        Node <T>* aux= new Node <T>();
-        back->next= aux;
-        back->code = x;
-        back=aux;
-
-    }
-
-    T dequeue(){
-            if(!this->empty()){
-                Node <T>* aux = this->front;
-                this->front=front->next;
-                aux->next = NULL;
-                int x = aux->code;
-                delete aux;
-                return x;
-            }else{
-                return -1;
-            }
-    }
-
 };
 
 template <typename T>
