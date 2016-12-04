@@ -183,6 +183,7 @@ public:
     	int tam = (int) items.size();
     	items.push_back( items[0] );
     	Ordenacao::QuickSort(items, 0, tam - 1);
+    	
     	items.pop_back();
     }
     
@@ -243,7 +244,7 @@ class Queue {
 private:
 	
     Node <T> *front, *back;
-    const int NILL = -1;
+    static const int NILL = -1;
     
 public:
 
