@@ -272,30 +272,47 @@ public:
 	
 };
 
-//TODO deletar
-void testeHeapSort(){
+
+class MainProcessing{
 	
-	int arr[] = {0,5,4,3,2,1};
-	vector<int> testVector(arr, arr+6);
+public:
 	
-	for(int i=0; i< 6; i++){
-		cout << testVector[i] << " ";
-	}
-	cout << endl;
-	cout << "using heapsort"<<endl;
+    vector < Graph <int> > adj;
+    vector <int> enemiesPos;
+    double distanceTotal;
+
+
+    MainProcessing(){
+    	init();
+    }
+
+
+    void init(){
+    	this->distanceTotal = 0;
+    }
+    
 	
-	Ordenacao::heapsort( testVector);
-	
-	for(int i=0; i< 6; i++){
-		cout << testVector[i] << " ";
-	}
-	cout << endl;
-	
-	
-}
+    void systemInputWithDistance(Graph <int> g, int strings){
+        int vertex1;
+        int vertex2;
+        double distance;
+        for(int i = 0; i < strings; i++){
+            cin >> vertex1;
+            cin >> vertex2;
+            cin >> distance;
+            g.insertEdge(vertex1, vertex2, distance);
+        }
+    }
+};
 
 int main() {
-	testeHeapSort();
-	cout << "PAA PERÍODO QUE VEM PORRA" << endl;
+	MainProcessing pp2;
+	int vertexes, strings;
+	cin >> vertexes;
+	cin >> strings;
+	Graph <int> g (vertexes);
+	
+	pp2.systemInputWithDistance(g, strings);
+	
 	return 0;
 }
