@@ -338,10 +338,9 @@ public:
 	
 };
 
-
-int main() {
-	
-	int arr[] = {0,5,4,3,2,1};
+//TODO deletar
+void testeHeapSort(){
+		int arr[] = {0,5,4,3,2,1};
 	vector<int> testVector(arr, arr+6);
 	
 	for(int i=0; i< 6; i++){
@@ -357,6 +356,12 @@ int main() {
 	}
 	cout << endl;
 	
+	
+}
+
+int main() {
+	
+	testeHeapSort();
 	cout << "PAA PERÍODO QUE VEM PORRA" << endl;
 	return 0;
 }
