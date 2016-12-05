@@ -20,20 +20,12 @@ class Ordenacao{
 private:
 	
 	template < class T >
-	static void troca( T& a, T& b ) {
+	static void swap( T& a, T& b ) {
 		
 		T aux = a;
 		a = b;
 		b = aux;
 	}
-	
-	
-	template < class T >
-	static int QuickSort_Particao ( vector<T>& A, int p, int r );
-	
-	
-	template < class T >
-	static void QuickSort_Recursao(vector<T>& A, int p,int r);
 	
 	
 	static int pai(int i){
@@ -60,71 +52,12 @@ private:
 		
 public:
 	
-	const static int Crescente = 1;
-	const static int Decrescente = 2;
-	
-	template < class T>
-	static void QuickSort( vector<T> array);
-	
 	template < class T >
 	static void heapsort( vector<T>& A );
 };
-	template < class T >
-	int Ordenacao::QuickSort_Particao( vector<T>& A, int p, int r ){
-	
-	    T x = A[p];
-	    T tmp = A[r + 1];
-	    A[r + 1] = x;
-	    int i = p;
-	    int j = r + 1;
-	
-	    while (true){
-	
-	        do {
-	
-	        	i++;
-	        } while( A[i] < x );
-	        do {
-	
-	        	j--;
-	        } while( A[j] > x );
-	        if(i < j){
-	
-	        	troca( A[i], A[j] );
-	        }else{
-				
-				troca( A[p], A[j] );
-	            A[r + 1] = tmp;
-	            return j;
-	        }
-	    }
-	}
-
-	template < class T >
-	void Ordenacao::QuickSort_Recursao(vector<T>& A, int p,int r){
-	
-	    if (p <= r){
-	    	
-		    int q = QuickSort_Particao(A, p, r);
-			QuickSort_Recursao(A, p, q-1);
-			QuickSort_Recursao(A, q + 1, r);
-	    }
-	}
-
-	template < class T>
-	void Ordenacao::QuickSort( vector<T> array){
-		
-		if( not array.empty() ){
-			int tam = (int) array.size();
-			array.push_back( array[0] );
-			QuickSort_Recursao( array, 0, tam -1  );
-			array.pop_back();
-		}
-	}
-
-
 	template <class T>
 	void Ordenacao::maxHeapify( vector<T>& A, int i, int &heapSize ){
+		
 		int l = esq(i), r = dir(i), maior = -1;
 		if (l <= heapSize and A[l] > A[i])
 			maior = l;
@@ -135,22 +68,24 @@ public:
 			maior = r;
 		if (maior != i){
 			swap(A[i], A[maior]);
-			Ordenacao::maxHeapify(A, maior, heapSize);
+			maxHeapify(A, maior, heapSize);
 		}
 	}
 
 
 	template <class T>
 	void Ordenacao::buildMaxHeap( vector<T>& A, int &heapSize ){
+		
 		heapSize = (int) A.size() -1;
 		for (int i=(int) floor(heapSize/2); i >=1; i--){
-			Ordenacao::maxHeapify(A, i, heapSize);
+			maxHeapify(A, i, heapSize);
 		}
 	}
 	
 	
 	template <class T>
 	void Ordenacao::heapsort( vector<T>& A ){
+		
 		int heapSize = 0;
 		buildMaxHeap(A, heapSize);
 		for (int i=A.size()-1;i > 1;i--){
@@ -176,16 +111,15 @@ public:
     
     
     void insert(T x, double d){
+    	
     	items.push_back(x);
     	distance.push_back(d);
-    	int tam = (int) items.size();
-    	items.push_back( items[0] );
-    	Ordenacao::QuickSort(items, 0, tam - 1);
-    	items.pop_back();
+    	Ordenacao::heapsort( items );
     }
     
     
     void remove(T& x){
+    	
     	if (!empty()){
     		int pos = search(x);
     		items.erase(pos);
@@ -340,7 +274,8 @@ public:
 
 //TODO deletar
 void testeHeapSort(){
-		int arr[] = {0,5,4,3,2,1};
+	
+	int arr[] = {0,5,4,3,2,1};
 	vector<int> testVector(arr, arr+6);
 	
 	for(int i=0; i< 6; i++){
@@ -360,7 +295,6 @@ void testeHeapSort(){
 }
 
 int main() {
-	
 	testeHeapSort();
 	cout << "PAA PERÍODO QUE VEM PORRA" << endl;
 	return 0;
