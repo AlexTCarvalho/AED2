@@ -12,6 +12,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
+#include <iomanip>
 
 using namespace std;
 
@@ -275,24 +276,30 @@ public:
 
 class MainProcessing{
 	
+private:
+	
+	double distanceTotal;
+	
 public:
 	
     vector < Graph <int> > adj;
     vector <int> enemiesPos;
-    double distanceTotal;
 
 
     MainProcessing(){
+    	
     	init();
     }
 
 
     void init(){
+    	
     	this->distanceTotal = 0;
     }
     
-	
+    
     void systemInputWithDistance(Graph <int> g, int strings){
+    	
         int vertex1;
         int vertex2;
         double distance;
@@ -303,16 +310,30 @@ public:
             g.insertEdge(vertex1, vertex2, distance);
         }
     }
+    
+    
+    void execute(){
+    	
+		int vertexes, strings, origin;
+		cin >> vertexes;
+		cin >> strings;
+		Graph <int> g (vertexes);
+		systemInputWithDistance(g, strings);
+		cin >> origin;
+		posExecute();
+	}
+
+	
+    void posExecute(){
+    	cout << fixed << setprecision(2);
+    	cout << distanceTotal<<endl;
+	}
 };
 
 int main() {
+	
 	MainProcessing pp2;
-	int vertexes, strings;
-	cin >> vertexes;
-	cin >> strings;
-	Graph <int> g (vertexes);
 	
-	pp2.systemInputWithDistance(g, strings);
-	
+	pp2.execute();
 	return 0;
 }
