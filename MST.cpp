@@ -12,7 +12,12 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
+#include <climits>
 #include <iomanip>
+#include <float.h>
+
+#define infinito 0x1.fffffffffffffp+1023
+#define infinitoTeste -1
 
 using namespace std;
 
@@ -98,6 +103,20 @@ public:
 
 
 template <class T>
+class Vertex{
+public:
+	
+	T chave;
+	Vertex<T> *pai;
+	
+	
+	Vertex(T valueDefault){
+		chave = valueDefault;
+		pai = NULL;
+	}
+};
+
+template <class T>
 class List {
 	
 private:
@@ -115,7 +134,6 @@ public:
     	
     	items.push_back(x);
     	distance.push_back(d);
-    	Ordenacao::heapsort( items );
     }
     
     
@@ -213,10 +231,59 @@ public:
 
 };
 
+
+template <class T>
+class PriorityQueue {
+	
+private:
+	
+    vector<T> elements;
+    static const int NILL = -1;
+    
+public:
+
+    PriorityQueue (){
+	}
+
+    bool isEmpty(){ 
+    
+		return elements.empty();
+	}
+    
+    
+    void addAll( vector<T> fila ){
+    	
+        elements.insert(elements.begin(), fila.begin(),fila.end());
+    }
+
+
+    T pop(){
+    	
+		if( not this->isEmpty() ){
+			T x = elements[0];
+			cout << "teste> "<< elements.size()<< " ; ";
+			elements.erase(elements.begin());
+			cout <<  elements.size()<<"fim teste"<<endl;
+		    return x;
+		}else{
+		    return NILL;
+		}
+    }
+    
+    T extractMin(){
+    	Ordenacao::heapsort( elements); 
+    	T x = elements[0];
+    	elements.erase( elements.begin() );
+    	return x;
+	}
+
+};
+
+
 template <class T>
 class Graph{
 	
-	List <T> *adj;
+	T** matrizAdj;
 	int n, m;
 	
 public:
@@ -229,35 +296,47 @@ public:
 
 
 	void destroy(){
-		for (int i = 1; i <= n; i++) {
-			adj[i].destroy(); // destroi lista
+		
+		for (int i = 0; i < n; i++) {
+			delete[](matrizAdj[i]); // destroi lista
 		}
-		delete(adj);
+		delete(matrizAdj);
 		n = m = 0;
 	}
 	
 
-
 	void init(int n){
+		
 		if (this-> n != 0) destroy();
 		this-> n = n;
-		adj = new List <T> [n];
+		matrizAdj = new T*[n];
+		for(int i=0;i<n;i++){
+			
+			matrizAdj[i] = new T[n];
+		}
+		for( int i=0; i<n; i++ ){	
+		
+			for( int j=0; j<n; j++ ){
+				matrizAdj[i][j] =  (i==j)? 0 : infinito;
+			}
+		}
 	}
 	
 
-	List <T> getAdj(int pos){
-		return adj[pos];
+	vector<T> getAdj(int pos){
+		vector<T> adj;
+		for(int j=0; j< n;j++){
+			if( matrizAdj[pos][j] != 0 and  matrizAdj[pos][j] != infinito)
+				adj.push_back(pos);
+		}
+		return adj;
 	}
 	
 
-	int getAdjSize(int pos){
-		return adj[pos].getSize();
-	}
-
-
-	void insertEdge(T u, T v, double d){
-		adj[u].insert(v, d);
-		adj[v].insert(u, d);
+	void insertEdge(int u,int v, double d){
+	
+		matrizAdj[u][v] = d;
+		matrizAdj[v][u] = d;
 		m++;
 	}
 
@@ -273,19 +352,36 @@ public:
 	
 };
 
+class GraphAlgorithms{
+
+private:
+
+public:
+	
+	template < class T >
+	static vector< Vertex<double> > Prim( Graph<T> A );
+};
+	template < class T >
+	vector<Vertex<double> > GraphAlgorithms::Prim( Graph<T> A ){
+		vector<Vertex<double> > mst;
+		vector<Vertex<double> > listVertex;
+		listVertex.assign( A.getOrder(), Vertex<double>(infinito) );
+		return mst;
+	}
 
 class MainProcessing{
 	
 private:
 	
+	int vertexes;
+	int strings;
+	int origin;
+	Graph <double>* g;
+	vector<Vertex<double> > mst;
 	double distanceTotal;
 	
 public:
 	
-    vector < Graph <int> > adj;
-    vector <int> enemiesPos;
-
-
     MainProcessing(){
     	
     	init();
@@ -298,33 +394,39 @@ public:
     }
     
     
-    void systemInputWithDistance(Graph <int> g, int strings){
+    void systemInputWithDistance(Graph<double>* g, int strings){
     	
         int vertex1;
         int vertex2;
         double distance;
         for(int i = 0; i < strings; i++){
+        	
             cin >> vertex1;
             cin >> vertex2;
             cin >> distance;
-            g.insertEdge(vertex1, vertex2, distance);
+            g->insertEdge(vertex1, vertex2, distance);
         }
     }
     
     
     void execute(){
     	
-		int vertexes, strings, origin;
-		cin >> vertexes;
-		cin >> strings;
-		Graph <int> g (vertexes);
+		cin >> vertexes >> strings;
+		g = new Graph<double>(vertexes);
 		systemInputWithDistance(g, strings);
-		cin >> origin;
+    	cin >> origin;
+     	mst = GraphAlgorithms::Prim(*g);
 		posExecute();
 	}
 
 	
     void posExecute(){
+    	
+    	int tam  = (int)mst.size();
+    	for( int i=0; i< tam; i++){
+    		Vertex<double> aux = mst[i];
+    		distanceTotal+= aux.chave;
+		}
     	cout << fixed << setprecision(2);
     	cout << distanceTotal<<endl;
 	}
@@ -333,7 +435,6 @@ public:
 int main() {
 	
 	MainProcessing pp2;
-	
 	pp2.execute();
 	return 0;
 }
