@@ -1,12 +1,3 @@
-//============================================================================
-// Name        : MST.cpp
-// Author      : Alex T. Carvalho
-// Version     :
-// Copyright   : ATC Serviços de LP Ltda.
-// Description : Hello World in C++, Ansi-style
-//============================================================================
-
-
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -17,7 +8,6 @@
 #include <float.h>
 
 #define infinito 0x1.fffffffffffffp+1023
-#define infinitoTeste -1
 #define NILL -1
 
 using namespace std;
@@ -168,72 +158,11 @@ public:
 		return this->chave > b.chave;
 	}
 	
+	
 	bool operator==(int value) const{
 	
 		return this->value == value;
 	}
-};
-
-template <class T>
-class List {
-	
-private:
-	
-    vector <T> items;
-    vector <double> distance;
-    bool empty (){return items.size() == 0;}
-public:
-	
-    List(){
-    }
-    
-    
-    void insert(T x, double d){
-    	
-    	items.push_back(x);
-    	distance.push_back(d);
-    }
-    
-    
-    void remove(T& x){
-    	
-    	if (!empty()){
-    		int pos = search(x);
-    		items.erase(pos);
-    	}
-    }
-    
-
-    T getVertex(int pos){
-    	return items[pos];
-    }
-    
-
-    double getDistance(int pos){
-    	return distance[pos];
-    }
-
-
-    int search(T k) {
-        for (unsigned int i=0;i<items.size();i++){
-        	if (items[i] == k)
-        		return i;
-        }
-        return -1;
-    }
-
-
-    void destroy(){
-    	for (unsigned int i=0; i <  items.size();i++){
-    		delete(&items[i]);
-    	}
-    }
-    
-
-    int getSize(){
-    	return items.size();
-    }
-
 };
 
 template <typename T>
@@ -301,10 +230,6 @@ public:
     PriorityQueue (){
 	}
 	
-	int getTam(){
-		
-		return elements.size();
-	}
 
     bool isEmpty(){ 
     
@@ -379,7 +304,7 @@ public:
 	void destroy(){
 		
 		for (int i = 0; i < n; i++) {
-			delete[](matrizAdj[i]); // destroi lista
+			delete[](matrizAdj[i]);
 		}
 		delete(matrizAdj);
 		n = m = 0;
@@ -451,7 +376,6 @@ public:
 		vector<Vertex<double> > listVertex;
 		Vertex<double> sentinela(NILL);
 		sentinela.setValue(NILL);
-		
 		double distance;
 		listVertex.assign( A.getOrder(), Vertex<double>(infinito) );
 		for( int i=0; i < (int) listVertex.size(); i++ ){
@@ -464,26 +388,16 @@ public:
 		while( not Q.isEmpty() ){
 
 			Vertex<double> u =  Q.extractMin();
-			
 			mst.push_back(u);
 			vector< int > listAdj = A.getAdj( u.getValue() );
-			/*cout <<"teste : listaAdj: indice : "<<u.getValue()<<endl;
-			for ( int i=0; i< (int)listAdj.size(); i++ ) cout << listAdj[i]<<" ";
-			cout << endl;*/
 			vector<Vertex<double> >& array = Q.getReferenceArray();
 			for ( int i=0; i< (int)listAdj.size(); i++ ){
 				int v =  Q.getPosicionElemByValue( listAdj[i] );
 				if( v!= -1 ){
 					distance = A.getDistance(u.getValue(), array[v].getValue() );
-					//cout<< "ero o "<< listAdj[i]<< " tava em  "<< v<<endl;
-				//	cout << distance<< " e "<< array[v].getChave()<<endl;
 					if( distance < array[v].getChave() ){
-					//	cout<< "antes :"<< array[v].getChave()<<endl;
-						Vertex<double> x =array[v];
-						x.setChave( distance );
-						x.setPai( u.getValue() );
-						array[v] =  x;
-					//	cout<< "depois :"<< array[v].getChave()<<endl;
+						array[v].setChave( distance );
+						array[v].setPai( u.getValue() );
 					}
 				}
 			}
