@@ -18,6 +18,7 @@
 
 #define infinito 0x1.fffffffffffffp+1023
 #define infinitoTeste -1
+#define NILL -1
 
 using namespace std;
 
@@ -104,15 +105,72 @@ public:
 
 template <class T>
 class Vertex{
-public:
+
+private:
 	
 	T chave;
-	Vertex<T> *pai;
+	int pai;
+	int value;
+	
+public:
 	
 	
 	Vertex(T valueDefault){
 		chave = valueDefault;
-		pai = NULL;
+		pai = NILL;
+	}
+	
+	
+	T getChave(){
+		
+		return chave;
+	}
+	
+	
+	void setChave(T ch){
+		
+		chave = ch;
+	}
+	
+	
+	int getPai(){
+		
+		return pai;
+	}
+	
+	
+	void setPai( int pai){
+		
+		this->pai= pai;
+	}
+	
+	
+	int getValue(){
+		
+		return value;
+	}
+	
+	
+	void setValue(int value){
+		
+		this->value = value;
+	}
+	
+	
+	bool operator<(Vertex b) const{
+	
+		return this->chave < b.chave;
+	}
+	
+	
+	bool operator>(Vertex b) const{
+	
+		return this->chave > b.chave;
+	}
+	
+	bool operator==(int value) const{
+	
+		return this->value == value;
 	}
 };
 
@@ -194,7 +252,6 @@ class Queue {
 private:
 	
     Node <T> *front, *back;
-    static const int NILL = -1;
     
 public:
 
@@ -238,32 +295,34 @@ class PriorityQueue {
 private:
 	
     vector<T> elements;
-    static const int NILL = -1;
     
 public:
 
     PriorityQueue (){
 	}
+	
+	int getTam(){
+		
+		return elements.size();
+	}
 
     bool isEmpty(){ 
     
-		return elements.empty();
+		return elements.size() <= 1;
 	}
     
     
     void addAll( vector<T> fila ){
     	
-        elements.insert(elements.begin(), fila.begin(),fila.end());
+        elements.insert(elements.end(), fila.begin(),fila.end());
     }
 
 
     T pop(){
     	
 		if( not this->isEmpty() ){
-			T x = elements[0];
-			cout << "teste> "<< elements.size()<< " ; ";
-			elements.erase(elements.begin());
-			cout <<  elements.size()<<"fim teste"<<endl;
+			T x = elements[1];
+			elements.erase(elements.begin()+1);
 		    return x;
 		}else{
 		    return NILL;
@@ -271,10 +330,32 @@ public:
     }
     
     T extractMin(){
-    	Ordenacao::heapsort( elements); 
-    	T x = elements[0];
-    	elements.erase( elements.begin() );
-    	return x;
+    	if ( not elements.empty() ){
+    		Ordenacao::heapsort( elements); 
+			T x = elements[1];
+			elements.erase( elements.begin() +1);
+			return x;	
+		}
+		else{
+			
+			return NILL;
+		}
+    	
+	}
+	
+	vector<T>& getReferenceArray(){
+		
+		return elements;
+	}
+	
+	int getPosicionElemByValue( int value){
+		
+		for(int i=0; i < (int)elements.size();i++){
+			if( elements[i] == value){
+				return i;
+			}
+		}
+		return -1;
 	}
 
 };
@@ -323,11 +404,11 @@ public:
 	}
 	
 
-	vector<T> getAdj(int pos){
-		vector<T> adj;
+	vector<int> getAdj(int pos){
+		vector<int> adj;
 		for(int j=0; j< n;j++){
 			if( matrizAdj[pos][j] != 0 and  matrizAdj[pos][j] != infinito)
-				adj.push_back(pos);
+				adj.push_back( j );
 		}
 		return adj;
 	}
@@ -350,24 +431,66 @@ public:
 		return this->m;
 	}
 	
+	
+	double getDistance(int u, int v){
+		return matrizAdj[u][v];
+	}
 };
 
 class GraphAlgorithms{
-
-private:
-
 public:
 	
 	template < class T >
-	static vector< Vertex<double> > Prim( Graph<T> A );
+	static vector< Vertex<double> > Prim( Graph<T> A, int raiz  );
 };
+
 	template < class T >
-	vector<Vertex<double> > GraphAlgorithms::Prim( Graph<T> A ){
+	vector<Vertex<double> > GraphAlgorithms::Prim( Graph<T> A, int raiz ){
+		
 		vector<Vertex<double> > mst;
 		vector<Vertex<double> > listVertex;
+		Vertex<double> sentinela(NILL);
+		sentinela.setValue(NILL);
+		
+		double distance;
 		listVertex.assign( A.getOrder(), Vertex<double>(infinito) );
+		for( int i=0; i < (int) listVertex.size(); i++ ){
+			listVertex[i].setValue(i);
+		}
+		listVertex[raiz].setChave(0);
+		listVertex.insert(listVertex.begin(), sentinela);
+		PriorityQueue<Vertex<double> > Q;
+		Q.addAll( listVertex );
+		while( not Q.isEmpty() ){
+
+			Vertex<double> u =  Q.extractMin();
+			
+			mst.push_back(u);
+			vector< int > listAdj = A.getAdj( u.getValue() );
+			/*cout <<"teste : listaAdj: indice : "<<u.getValue()<<endl;
+			for ( int i=0; i< (int)listAdj.size(); i++ ) cout << listAdj[i]<<" ";
+			cout << endl;*/
+			vector<Vertex<double> >& array = Q.getReferenceArray();
+			for ( int i=0; i< (int)listAdj.size(); i++ ){
+				int v =  Q.getPosicionElemByValue( listAdj[i] );
+				if( v!= -1 ){
+					distance = A.getDistance(u.getValue(), array[v].getValue() );
+					//cout<< "ero o "<< listAdj[i]<< " tava em  "<< v<<endl;
+				//	cout << distance<< " e "<< array[v].getChave()<<endl;
+					if( distance < array[v].getChave() ){
+					//	cout<< "antes :"<< array[v].getChave()<<endl;
+						Vertex<double> x =array[v];
+						x.setChave( distance );
+						x.setPai( u.getValue() );
+						array[v] =  x;
+					//	cout<< "depois :"<< array[v].getChave()<<endl;
+					}
+				}
+			}
+		}
 		return mst;
 	}
+	
 
 class MainProcessing{
 	
@@ -415,7 +538,7 @@ public:
 		g = new Graph<double>(vertexes);
 		systemInputWithDistance(g, strings);
     	cin >> origin;
-     	mst = GraphAlgorithms::Prim(*g);
+     	mst = GraphAlgorithms::Prim(*g, origin);
 		posExecute();
 	}
 
@@ -425,7 +548,8 @@ public:
     	int tam  = (int)mst.size();
     	for( int i=0; i< tam; i++){
     		Vertex<double> aux = mst[i];
-    		distanceTotal+= aux.chave;
+    		if( aux.getChave() != infinito )
+    			distanceTotal+= aux.getChave();
 		}
     	cout << fixed << setprecision(2);
     	cout << distanceTotal<<endl;
